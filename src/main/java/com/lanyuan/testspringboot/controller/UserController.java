@@ -8,6 +8,7 @@ import com.lanyuan.testspringboot.util.CodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/user")
@@ -88,7 +90,31 @@ public class UserController {
         System.err.println("application存的验证码是["+code2+"]");
     }
 
+    @GetMapping("login")
+    public R login(String account, String password, String code, HttpSession session){
+        ServletContext application = session.getServletContext();
+        String ran2 =(String) application.getAttribute("randomCode2");
+        User user = new User(account,password);
+        if(ran2.equalsIgnoreCase(code)){
+            User u = userService.login(user);
+            if(u!=null){
+                return R.ok().data("user",u);
+            }else return R.error().data("error","账号密码输入错误");
+        }else {
+            return R.error().data("error","验证码输入错误");
+        }
 
+    }
 
+    //注册验证-是否存在该账号
+    @RequestMapping(value = "/checkAccount",produces = "text/html;charset=utf-8")
+    public String checkAccount(String account){
+        User u = userService.findByAcunt(account);
+        if (u==null){
+            return "账号可用";
+        }else {
+            return "账号不可用";
+        }
+    }
 
 }

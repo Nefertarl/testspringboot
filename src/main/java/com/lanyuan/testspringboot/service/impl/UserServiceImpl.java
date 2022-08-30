@@ -52,4 +52,14 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateByPrimaryKeySelective(user);
     }
 
+    @Override
+    public User login(User user) {
+        return userMapper.login(user);
+    }
+
+    @Override
+    public User findByAcunt(String account) {
+        return userMapper.findByAcunt(account);
+    }
+
 }

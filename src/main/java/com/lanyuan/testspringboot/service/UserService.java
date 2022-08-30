@@ -19,4 +19,8 @@ public interface UserService {
 
     int updateById(User user);
 
+    User login(User user);
+
+    User findByAcunt(String account);
+
 }
