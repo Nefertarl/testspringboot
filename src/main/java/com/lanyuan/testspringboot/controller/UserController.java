@@ -59,8 +59,9 @@ public class UserController {
 
     //TODO: 后期需要完善
 
-    @GetMapping("pageListUser/{pageNum}/{pageSize}")
-    public R pageListUser(@PathVariable Integer pageNum,@PathVariable Integer pageSize){
+    @GetMapping("pageListUser")
+    public R pageListUser(@RequestParam(defaultValue = "1") Integer pageNum,
+                          @RequestParam(defaultValue = "5") Integer pageSize){
         PageInfo<User> pageInfo = userService.getPage(pageNum,pageSize);
         return R.ok().data("items",pageInfo.getList());
     }
@@ -114,6 +115,24 @@ public class UserController {
             return "账号可用";
         }else {
             return "账号不可用";
+        }
+    }
+
+    @PostMapping("RegisterUser")
+    public R RegisterUser(String account, String password, String code, HttpSession session){
+        User user = new User(account,password);
+        user.setCreatetime(new Date());
+        ServletContext application = session.getServletContext();
+        String ran2 =(String) application.getAttribute("randomCode2");
+        if(ran2.equalsIgnoreCase(code)){
+            int i = userService.addUser(user);
+            if(i>0){
+                return R.ok();
+            }else{
+                return R.error();
+            }
+        }else{
+            return R.error().data("error","验证码输入错误");
         }
     }
 

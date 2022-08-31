@@ -25,4 +25,6 @@ public interface UserMapper {
 
     User findByAcunt(String account);
 
+    List<User> selectUserByRid(Integer rid);
+
 }

@@ -1,9 +1,12 @@
 package com.lanyuan.testspringboot.service.impl;
 
 
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.lanyuan.testspringboot.mapper.RoleMapper;
 import com.lanyuan.testspringboot.pojo.Role;
 import com.lanyuan.testspringboot.service.RoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +15,10 @@ import java.util.List;
 @Service
 @Transactional
 public class RoleServiceImpl implements RoleService {
+
+    @Autowired
+    RoleMapper roleMapper;
+
     @Override
     public int addRole(Role role) {
         return 0;
@@ -29,7 +36,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public PageInfo<Role> getPage(Integer pageNum, Integer pageSize) {
-        return null;
+        PageHelper.startPage(pageNum,pageSize);
+        List<Role> list = roleMapper.show();
+        return new PageInfo<>(list);
     }
 
     @Override

@@ -4,7 +4,18 @@
   <resultMap id="BaseResultMap" type="com.lanyuan.testspringboot.pojo.Role">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="rolename" jdbcType="VARCHAR" property="rolename" />
+
   </resultMap>
+
+  <resultMap id="BaseResultMap2" type="com.lanyuan.testspringboot.pojo.Role">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="rolename" jdbcType="VARCHAR" property="rolename" />
+
+        <collection property="adminList" column="id" ofType="com.lanyuan.testspringboot.pojo.User"
+                    select="com.lanyuan.testspringboot.mapper.UserMapper.selectUserByRid"></collection>
+
+  </resultMap>
+
   <sql id="Base_Column_List">
     id, rolename
   </sql>
@@ -13,6 +24,17 @@
     <include refid="Base_Column_List" />
     from role
     where id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectRoleByUid" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from relation re,role ro
+        where re.uid = #{uid} and re.rid = ro.id
+    </select>
+  <select id="show" resultMap="BaseResultMap2">
+    select
+    <include refid="Base_Column_List"></include>
+    from role
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from role

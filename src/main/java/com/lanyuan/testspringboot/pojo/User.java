@@ -2,6 +2,7 @@ package com.lanyuan.testspringboot.pojo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class User implements Serializable {
     private Integer id;
@@ -28,12 +29,22 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private List<Role> roles;
+
     public User() {
     }
 
     public User(String account, String password) {
         this.account = account;
         this.password = password;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     public Integer getId() {
@@ -141,6 +152,7 @@ public class User implements Serializable {
         sb.append(", sex=").append(sex);
         sb.append(", headPic=").append(headPic);
         sb.append(", del=").append(del);
+        sb.append(", roles=").append(roles);
         sb.append("]");
         return sb.toString();
     }

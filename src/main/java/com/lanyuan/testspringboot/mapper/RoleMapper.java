@@ -1,7 +1,11 @@
 package com.lanyuan.testspringboot.mapper;
 
 import com.lanyuan.testspringboot.pojo.Role;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface RoleMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +18,8 @@ public interface RoleMapper {
     int updateByPrimaryKeySelective(Role record);
 
     int updateByPrimaryKey(Role record);
+
+    List<Role> selectRoleByUid(Integer uid);
+
+    List<Role> show();
 }

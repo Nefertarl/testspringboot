@@ -13,7 +13,27 @@
     <result column="sex" jdbcType="CHAR" property="sex" />
     <result column="head_pic" jdbcType="VARCHAR" property="headPic" />
     <result column="del" jdbcType="CHAR" property="del" />
+
+    <collection property="roles" column="id" ofType="com.lanyuan.testspringboot.pojo.Role"
+                select="com.lanyuan.testspringboot.mapper.RoleMapper.selectRoleByUid"/>
+
   </resultMap>
+
+  <resultMap id="BaseResultMap2" type="com.lanyuan.testspringboot.pojo.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="createtime" jdbcType="DATE" property="createtime" />
+    <result column="sex" jdbcType="CHAR" property="sex" />
+    <result column="head_pic" jdbcType="VARCHAR" property="headPic" />
+    <result column="del" jdbcType="CHAR" property="del" />
+
+  </resultMap>
+
   <sql id="Base_Column_List">
     id, account, password, name, phone, email, status, createtime, sex, head_pic, del
   </sql>
@@ -38,10 +58,16 @@
     <select id="findByAcunt" resultMap="BaseResultMap">
       select
       <include refid="Base_Column_List"></include>
-      from admin
+      from user
       where account = #{account}
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <select id="selectUserByRid" resultMap="BaseResultMap2">
+    select
+    <include refid="Base_Column_List"></include>
+    from relation re,user us
+    where re.rid = #{rid} and re.uid = us.id
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user
     where id = #{id,jdbcType=INTEGER}
   </delete>

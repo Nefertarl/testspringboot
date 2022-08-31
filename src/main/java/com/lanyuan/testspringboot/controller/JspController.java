@@ -1,14 +1,29 @@
 package com.lanyuan.testspringboot.controller;
 
+import com.github.pagehelper.PageInfo;
+import com.lanyuan.testspringboot.pojo.User;
+import com.lanyuan.testspringboot.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 @Controller
 public class JspController {
 
+    @Autowired
+    UserService userService;
+
     @RequestMapping("/toLogin")
     public String toLogin(){
         return "/login";
+    }
+
+    @RequestMapping("/toRegister")
+    public String toRegister(){
+        return "/register";
     }
 
     @RequestMapping("/toHome")
@@ -32,7 +47,11 @@ public class JspController {
     }
 
     @RequestMapping("/toUserList")
-    public String toUserList(){
+    public String toUserList(@RequestParam(defaultValue = "1") Integer pageNum,
+                             @RequestParam(defaultValue = "5") Integer pageSize, Map map){
+        PageInfo<User> pageInfo = userService.getPage(pageNum,pageSize);
+        System.out.println(pageInfo.getList());
+        map.put("items",pageInfo);
         return "/admin/list";
     }
 
@@ -51,9 +70,9 @@ public class JspController {
         return "/role/list";
     }
 
-    @RequestMapping("/toRegister")
-    public String toRegister(){
-        return "/register";
+    @RequestMapping("/logout")
+    public String logout(){
+        return "/login";
     }
 
 }
