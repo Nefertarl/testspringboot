@@ -21,17 +21,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public int addRole(Role role) {
-        return 0;
+        return roleMapper.insertSelective(role);
     }
 
     @Override
-    public int removeById(Role role) {
-        return 0;
-    }
-
-    @Override
-    public List<Role> findAll() {
-        return null;
+    public int removeById(Integer id) {
+        return roleMapper.deleteByPrimaryKey(id);
     }
 
     @Override
@@ -42,12 +37,30 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public PageInfo<Role> getPage(Role role,Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        List<Role> list = roleMapper.showa(role);
+        return new PageInfo<>(list);
+    }
+
+    @Override
     public Role getById(Integer id) {
-        return null;
+        return roleMapper.selectByPrimaryKey(id);
     }
 
     @Override
     public int updateById(Role role) {
-        return 0;
+        return roleMapper.updateByPrimaryKeySelective(role);
+    }
+
+    @Override
+    public Role findByRolename(String rolename) {
+        return roleMapper.findByRolename(rolename);
+    }
+
+    @Override
+    public int doBathDelRole(Integer[] ids) {
+        int i = roleMapper.doBathDelRole(ids);
+        return i;
     }
 }

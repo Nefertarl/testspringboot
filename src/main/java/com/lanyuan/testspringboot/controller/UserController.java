@@ -25,8 +25,8 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("addUser")
-    public R addUser(@RequestBody User user){
+    @PostMapping("/addUser")
+    public R addUser(User user){
         user.setCreatetime(new Date());
         int i = userService.addUser(user);
         if(i>0){
@@ -36,10 +36,20 @@ public class UserController {
         }
     }
 
-    //TODO: 后期需要完善
+    @PostMapping("/updateUser")
+    public R updateUser( User user){
+        int i = userService.updateById(user);
+        if(i>0){
+            return R.ok();
+        }else{
+            return R.error();
+        }
+    }
 
-    @DeleteMapping("{id}")
-    public R removeUser(@PathVariable Integer id){
+
+
+    @DeleteMapping("/doDelUser")
+    public R removeUser(Integer id){
       User user = new User();
       user.setId(id);
       user.setDel("1");
@@ -51,13 +61,36 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/doBathDelUser")
+    public R doBathDelUser(Integer[] ids){
+
+        int i = 1;
+
+        for(Integer id : ids){
+            User user = userService.getById(id);
+            if(user!=null){
+                i++;
+            }else{
+                i = -1;
+                break;
+            }
+        }
+
+        if(i>0){
+            userService.doBathDelUser(ids);
+            return R.ok();
+        }else{
+            return R.error();
+        }
+
+    }
+
     @GetMapping("findAll")
     public R findAllUser(){
         List<User> list = userService.findAll();
         return R.ok().data("items",list);
     }
 
-    //TODO: 后期需要完善
 
     @GetMapping("pageListUser")
     public R pageListUser(@RequestParam(defaultValue = "1") Integer pageNum,
@@ -66,23 +99,25 @@ public class UserController {
         return R.ok().data("items",pageInfo.getList());
     }
 
-    //TODO: 后期需要完善
-
-    @GetMapping("getUser/{id}")
-    public R getUser(@PathVariable Integer id){
-        User user = userService.getById(id);
-        return R.ok().data("user",user);
+    //带条件的分页查询
+    @GetMapping("/pageList")
+    public R pageList(User user,@RequestParam(defaultValue = "1") Integer pageNum,
+                          @RequestParam(defaultValue = "5") Integer pageSize){
+        PageInfo<User> pageInfo = userService.getPage(user,pageNum,pageSize);
+        return R.ok().data("items",pageInfo.getList());
     }
 
-    @PostMapping("updateUser")
-    public R updateUser(@RequestBody User user){
-        int i = userService.updateById(user);
-        if(i>0){
-            return R.ok();
+    @GetMapping("/getUser")
+    public R getUser(Integer id){
+        User user = userService.getById(id);
+        if(user!=null){
+            return R.ok().data("user",user);
         }else{
             return R.error();
         }
     }
+
+
 
     @GetMapping("getCode")
     public void getCode(HttpSession session, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -42,6 +42,7 @@
     <include refid="Base_Column_List" />
     from user
     where id = #{id,jdbcType=INTEGER}
+    and del = 0
   </select>
   <select id="findAll" resultMap="BaseResultMap">
     select
@@ -59,7 +60,7 @@
       select
       <include refid="Base_Column_List"></include>
       from user
-      where account = #{account}
+      where account = #{account} and del = 0
     </select>
   <select id="selectUserByRid" resultMap="BaseResultMap2">
     select
@@ -67,11 +68,28 @@
     from relation re,user us
     where re.rid = #{rid} and re.uid = us.id
   </select>
+  <select id="findAlls" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from user
+    <where>
+      <if test="account!=null">
+        <bind name="newAccount" value="'%'+account+'%'"/>
+        and account like #{newAccount}
+      </if>
+    </where>
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.lanyuan.testspringboot.pojo.User">
+    <delete id="doBathDelUser">
+      delete from user where id in
+      <foreach collection="array" open="(" close=")" separator="," item="ids">
+        #{ids}
+      </foreach>
+    </delete>
+    <insert id="insert" parameterType="com.lanyuan.testspringboot.pojo.User">
     insert into user (id, account, password, 
       name, phone, email, 
       status, createtime, sex, head_pic, 

@@ -19,23 +19,18 @@
     <div class="col-lg-12">
       <div class="card">
         <div class="card-toolbar clearfix">
-          <form class="pull-right search-bar" method="get" action="/admin/show" id="mySearchForm" role="form">
+          <form class="pull-right search-bar" role="form">
             <div class="input-group">
               <div class="input-group-btn">
-                <input type="hidden" name="search_field" id="search-field" value="title">
-                <button class="btn btn-default dropdown-toggle" id="search-btn" data-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">
-                  search <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li> <a tabindex="-1" href="javascript:void(0)" data-field="cat_name" onclick="changeSearch('account')">账号</a> </li>
-                  <li> <a tabindex="-1" href="javascript:void(0)" data-field="cat_name" onclick="changeSearch('name')">姓名</a> </li>
-                  <li> <a tabindex="-1" href="javascript:void(0)" data-field="cat_name" onclick="changeSearch('sex')">性别</a> </li>
-                </ul>
+<!--                <button class="btn btn-default dropdown-toggle btn-block btn-primary" id="search-btn" onclick="doSearch()" data-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">-->
+<!--                  搜索 <span class="caret"></span>-->
+<!--                </button>-->
+                <button class="btn btn-block btn-primary" onclick="doSearch()" type="button" >搜索</button>
               </div>
-              <input type="text" class="form-control" id="search" onblur="doSearch()" value="" name="account" placeholder="请输入名称">
+              <input type="text" class="form-control" id="account" th:value="${search2}" name="account" placeholder="请输入你的账号">
             </div>
           </form>
-          <form id="myForm" action="" method="post">
+          <form>
             <div class="toolbar-btn-action">
               <a class="btn btn-primary m-r-5" th:href="@{/toUserAdd}"><i class="mdi mdi-plus"></i> 新增</a>
               <a class="btn btn-danger" href="#!" onclick="BathDelBtn()"><i class="mdi mdi-window-close"></i> 全部删除</a>
@@ -107,7 +102,10 @@
                   <div class="btn-group">
                     <a class="btn btn-xs btn-default" th:href="@{/toUserEdit(id=*{id})}" title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>
                     <a class="btn btn-xs btn-default" th:href="@{/toUserResources(id=*{id})}" title="分配角色" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>
-                    <a class="btn btn-xs btn-default" href="/admin/doDelAdmin?id=${a.id}&myHead=${a.headPic}" onclick="return confirm('是否删除')" title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>
+
+<!--                    <a  href="/admin/doDelAdmin?id=${a.id}&myHead=${a.headPic}" ></a>-->
+
+                    <a class="btn btn-xs btn-default" th:onclick="| executeAjax(*{id} )|"  title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>
                   </div>
                 </td>
               </tr>
@@ -116,17 +114,17 @@
             </table>
           </div>
           <ul class="pagination">
-            <li><span><a th:href="@{/toUserList(pageNum=1)}">首页</a></span></li>
-            <li><span><a th:href="@{/toUserList(pageNum=${items.prePage})}">«</a></span></li>
+            <li><span><a th:href="@{/toUserList(pageNum=1,account=${search2})}">首页</a></span></li>
+            <li><span><a th:href="@{/toUserList(pageNum=${items.prePage},account=${search2})}">«</a></span></li>
 
             <li th:each="i:${items.navigatepageNums}" class="" th:classappend="${i eq items.pageNum}? 'active':''">
-              <a th:href="@{/toUserList(pageNum=${i})}" >
+              <a th:href="@{/toUserList(pageNum=${i},account=${search2})}" >
                   <span th:text="${i}"></span>
               </a>
             </li>
 
-            <li><span><a th:href="@{/toUserList(pageNum=${items.nextPage})}">»</a></span></li>
-            <li><span><a th:href="@{/toUserList(pageNum=${items.pages})}">尾页</a></span></li>
+            <li><span><a th:href="@{/toUserList(pageNum=${items.nextPage},account=${search2})}">»</a></span></li>
+            <li><span><a th:href="@{/toUserList(pageNum=${items.pages},account=${search2})}">尾页</a></span></li>
 
           </ul>
 
@@ -149,39 +147,108 @@
 <script th:src="@{/js/main.min.js}"></script>
 <link th:href="@{/css/animate.css}" rel="stylesheet">
 <script type="text/javascript">
-//搜索选中的属性名称
-function changeSearch(obj){
-  document.getElementById("search").setAttribute("name",obj);
-}
 
-//
-function doSearch(){
-  var mySearchForm = document.getElementById("mySearchForm");
-  var search = document.getElementById("search");
-  if (search.name=="sex") {
-    if (search.value!="男" && search.value!="女"){
-      lightyear.loading('show');
-      // 假设ajax提交操作
-      setTimeout(function() {
-        lightyear.loading('hide');
-        lightyear.notify('输入的性别不对,只能是男或女!', 'danger', 100);
-      }, 1e3)
-      return false;
+  function executeAjax(id) {
+
+    if(confirm('是否删除')){
+      $.ajax({
+        url: '/testspringboot/user/doDelUser',
+        type: 'delete',
+        async: true,
+        data: {
+          id:id
+        },
+        dataType: 'json',
+        success: function (data) {
+          console.log(data)
+          if (data.code== 20000){
+            window.location.href="/testspringboot/toUserList";
+          }else{
+
+          }
+        },
+        error: function () {
+          console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+        }
+      })
     }
   }
-  mySearchForm.submit();
+
+
+
+//搜索功能
+function doSearch(){
+
+  var account = document.getElementById("account").value;
+
+  $.ajax({
+    url: '/testspringboot/user/pageList',
+    type: 'get',
+    async: true,
+    data: {
+      account:account
+    },
+    dataType: 'json',
+    success: function (data) {
+      console.log(data)
+      if (data.code== 20000){
+        window.location.href="/testspringboot/toUserList?account="+account;
+      }else{
+
+      }
+    },
+    error: function () {
+      console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+    }
+  })
+
 }
 
-//批量删除按钮
-function BathDelBtn(){
-  var myForm = document.getElementById("myForm");
-  //获取选中的id值
-  var value = cliBtn();
-  myForm.action="/admin/doBathDelAdmin?ids="+value;
-  if (chenNum()) {
-    myForm.submit();
+  //批量删除按钮
+  function BathDelBtn(){
+
+    //获取选中的id值
+    var ids = cliBtn();
+
+    console.log(ids)
+
+    if(chenNum()){
+
+      if (confirm('是否删除')) {
+
+        $.ajax({
+          url: '/testspringboot/user/doBathDelUser?ids='+ids,
+          type: 'delete',
+          async: true,
+          data: {
+          },
+          dataType: 'json',
+          success: function (data) {
+            console.log(data)
+            if (data.code== 20000){
+              window.location.href="/testspringboot/toUserList";
+            }else{
+
+            }
+          },
+          error: function () {
+            console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+          }
+        })
+
+      }else{
+        var cks = document.getElementsByName("ids[]");
+        for(var i=0;i<cks.length;i++){
+          if (cks[i].checked) {
+            cks[i].checked=false;
+          }
+        }
+        if(document.getElementById("check-all").checked) document.getElementById("check-all").checked=false;
+      }
+
+    }
+
   }
-}
 
 //获取选中的id值
 function cliBtn(){
@@ -197,17 +264,6 @@ function cliBtn(){
   return result;
 }
 
-//查看复选框是否被选中
-function chenNum(){
-  var cks = document.getElementsByName("ids[]");
-  for(var i=0;i<cks.length;i++){
-    if (cks[i].checked) {
-      return true;
-    }
-  }
-  return false;
-}
-
 
 $(function(){
     $('.search-bar .dropdown-menu a').click(function() {
@@ -216,6 +272,17 @@ $(function(){
         $('#search-btn').html($(this).text() + ' <span class="caret"></span>');
     });
 });
+
+  //查看复选框是否被选中
+  function chenNum(){
+    var cks = document.getElementsByName("ids[]");
+    for(var i=0;i<cks.length;i++){
+      if (cks[i].checked) {
+        return true;
+      }
+    }
+    return false;
+  }
 
 
 </script>

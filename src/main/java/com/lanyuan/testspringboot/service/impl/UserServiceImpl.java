@@ -29,6 +29,22 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateByPrimaryKeySelective(user);
     }
 
+    //批量逻辑删除
+    @Override
+    public int doBathDelUser(Integer[] ids) {
+
+        for (Integer id : ids){
+
+            User user1 = userMapper.selectByPrimaryKey(id);
+
+            if(user1!=null){
+                user1.setDel("1");
+                userMapper.updateByPrimaryKeySelective(user1);
+            }
+        }
+        return 2;
+    }
+
     @Override
     public List<User> findAll() {
         return userMapper.findAll();
@@ -39,6 +55,13 @@ public class UserServiceImpl implements UserService {
     public PageInfo<User> getPage(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum,pageSize);
         List<User> list = userMapper.findAll();
+        return new PageInfo<>(list);
+    }
+
+    @Override
+    public PageInfo<User> getPage(User user,Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        List<User> list = userMapper.findAlls(user);
         return new PageInfo<>(list);
     }
 

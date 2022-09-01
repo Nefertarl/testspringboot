@@ -36,9 +36,32 @@
     <include refid="Base_Column_List"></include>
     from role
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <select id="findByRolename" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List"></include>
+      from role
+      where rolename = #{rolename}
+    </select>
+    <select id="showa" resultMap="BaseResultMap2">
+        select
+        <include refid="Base_Column_List"></include>
+        from role
+        <where>
+          <if test="rolename!=null">
+            <bind name="newRolename" value="'%'+rolename+'%'"/>
+            and rolename like #{newRolename}
+          </if>
+        </where>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from role
     where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="doBathDelRole">
+    delete from role where id in
+    <foreach collection="array" open="(" close=")" separator="," item="ids">
+      #{ids}
+    </foreach>
   </delete>
   <insert id="insert" parameterType="com.lanyuan.testspringboot.pojo.Role">
     insert into role (id, rolename)

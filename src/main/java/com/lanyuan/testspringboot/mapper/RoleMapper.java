@@ -22,4 +22,10 @@ public interface RoleMapper {
     List<Role> selectRoleByUid(Integer uid);
 
     List<Role> show();
+
+    List<Role> showa(Role role);
+
+    Role findByRolename(String rolename);
+
+    int doBathDelRole(Integer[] ids);
 }

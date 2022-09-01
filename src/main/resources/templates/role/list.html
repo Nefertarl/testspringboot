@@ -20,23 +20,17 @@
     <div class="col-lg-12">
       <div class="card">
         <div class="card-toolbar clearfix">
-          <form class="pull-right search-bar" method="get" action="/role/show" role="form" id="mySearchForm">
+          <form class="pull-right search-bar" role="form">
             <div class="input-group">
               <div class="input-group-btn">
-                <input type="hidden" name="search_field" id="search-field" value="title">
-                <button class="btn btn-default dropdown-toggle" id="search-btn" data-toggle="dropdown" type="button" aria-haspopup="true" aria-expanded="false">
-                  search <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li> <a tabindex="-1" href="javascript:void(0)" data-field="cat_name" onclick="changeSearch('rolename')" >角色名称</a> </li>
-                </ul>
+                <button class="btn btn-block btn-primary" onclick="doSearch()" type="button" >搜索</button>
               </div>
-              <input type="text" class="form-control" value="" id="search" onblur="doSearch()" name="rolename" placeholder="请输入名称">
+              <input type="text" class="form-control" th:value="${search}" id="rolename" name="rolename" placeholder="请输入角色名称">
             </div>
           </form>
-          <form id="myForm" action="" method="post">
+          <form method="post">
             <div class="toolbar-btn-action">
-              <a class="btn btn-primary m-r-5" href="/role/toAdd"><i class="mdi mdi-plus"></i> 新增</a>
+              <a class="btn btn-primary m-r-5" th:href="@{/toRoleAdd}"><i class="mdi mdi-plus"></i> 新增</a>
               <a class="btn btn-danger" href="#!" onclick="BathDelBtn()"><i class="mdi mdi-window-close"></i> 全部删除</a>
             </div>
           </form>
@@ -49,7 +43,7 @@
               <tr>
                 <th>
                   <label class="lyear-checkbox checkbox-primary">
-                    <input type="checkbox" id="check-all"><span></span>
+                    <input type="checkbox" id="check-all" ><span></span>
                   </label>
                 </th>
                 <th>编号</th>
@@ -79,7 +73,8 @@
                 </td>
                 <td>
                   <div class="btn-group">
-                    <a class="btn btn-xs btn-default" href="/role/doDelRole?id=${a.id}" onclick="return confirm('是否删除')" title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>
+                    <a class="btn btn-xs btn-default" th:href="@{/toRoleEdit(id=*{id})}" title="编辑" data-toggle="tooltip"><i class="mdi mdi-pencil"></i></a>
+                    <a class="btn btn-xs btn-default" th:onclick="| executeAjax(*{id} )|"  title="删除" data-toggle="tooltip"><i class="mdi mdi-window-close"></i></a>
                   </div>
                 </td>
               </tr>
@@ -88,17 +83,17 @@
             </table>
           </div>
           <ul class="pagination">
-            <li><span><a th:href="@{/toUserList(pageNum=1)}">首页</a></span></li>
-            <li><span><a th:href="@{/toUserList(pageNum=${items.prePage})}">«</a></span></li>
+            <li><span><a th:href="@{/toRoleList(pageNum=1,rolename=${search})}">首页</a></span></li>
+            <li><span><a th:href="@{/toRoleList(pageNum=${items.prePage},rolename=${search})}">«</a></span></li>
 
             <li th:each="i:${items.navigatepageNums}" class="" th:classappend="${i eq items.pageNum}? 'active':''">
-              <a th:href="@{/toUserList(pageNum=${i})}" >
+              <a th:href="@{/toRoleList(pageNum=${i},rolename=${search})}" >
                 <span th:text="${i}"></span>
               </a>
             </li>
 
-            <li><span><a th:href="@{/toUserList(pageNum=${items.nextPage})}">»</a></span></li>
-            <li><span><a th:href="@{/toUserList(pageNum=${items.pages})}">尾页</a></span></li>
+            <li><span><a th:href="@{/toRoleList(pageNum=${items.nextPage},rolename=${search})}">»</a></span></li>
+            <li><span><a th:href="@{/toRoleList(pageNum=${items.pages},rolename=${search})}">尾页</a></span></li>
 
           </ul>
 
@@ -115,26 +110,106 @@
 <script type="text/javascript" th:src="@{/js/perfect-scrollbar.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/main.min.js}"></script>
 <script type="text/javascript">
-  function changeSearch(obj){
-    document.getElementById("search").setAttribute("name",obj);
+
+  function executeAjax(id) {
+
+    if(confirm('是否删除')){
+      $.ajax({
+        url: '/testspringboot/role/doDelRole',
+        type: 'delete',
+        async: true,
+        data: {
+          id:id
+        },
+        dataType: 'json',
+        success: function (data) {
+          console.log(data)
+          if (data.code== 20000){
+            window.location.href="/testspringboot/toRoleList";
+          }else{
+
+          }
+        },
+        error: function () {
+          console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+        }
+      })
+    }
   }
 
-  //
+  //搜索功能
   function doSearch(){
-    var mySearchForm = document.getElementById("mySearchForm");
-    mySearchForm.submit();
+
+    var rolename = document.getElementById("rolename").value;
+
+    $.ajax({
+      url: '/testspringboot/role/pageList',
+      type: 'get',
+      async: true,
+      data: {
+        rolename:rolename
+      },
+      dataType: 'json',
+      success: function (data) {
+        console.log(data)
+        if (data.code== 20000){
+          window.location.href="/testspringboot/toRoleList?rolename="+rolename;
+        }else{
+
+        }
+      },
+      error: function () {
+        console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+      }
+    })
+
   }
 
 
   //批量删除按钮
   function BathDelBtn(){
-    var myForm = document.getElementById("myForm");
+
     //获取选中的id值
-    var value = cliBtn();
-    myForm.action="/role/doBathDelRole?ids="+value;
-    if (chenNum()) {
-      myForm.submit();
+    var ids = cliBtn();
+
+    console.log(ids)
+
+    if(chenNum()){
+
+      if (confirm('是否删除')) {
+
+        $.ajax({
+          url: '/testspringboot/role/doBathDelRole?ids='+ids,
+          type: 'delete',
+          async: true,
+          data: {
+          },
+          dataType: 'json',
+          success: function (data) {
+            console.log(data)
+            if (data.code== 20000){
+              window.location.href="/testspringboot/toRoleList";
+            }else{
+
+            }
+          },
+          error: function () {
+            console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+          }
+        })
+
+      }else{
+        var cks = document.getElementsByName("ids[]");
+        for(var i=0;i<cks.length;i++){
+          if (cks[i].checked) {
+            cks[i].checked=false;
+          }
+        }
+        if(document.getElementById("check-all").checked) document.getElementById("check-all").checked=false;
+      }
+
     }
+
   }
 
   //获取选中的id值

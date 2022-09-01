@@ -21,10 +21,14 @@ public interface UserMapper {
 
     List<User> findAll();
 
+    List<User> findAlls(User user);
+
     User login(User user);
 
     User findByAcunt(String account);
 
     List<User> selectUserByRid(Integer rid);
+
+    int doBathDelUser(Integer[] ids);
 
 }

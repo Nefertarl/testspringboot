@@ -23,46 +23,42 @@
       <div class="card">
         <div class="card-body">
 
-          <form action="/admin/doAdd" id="myForm" onsubmit="return checkForm()" method="post" enctype="multipart/form-data" class="row">
+          <form enctype="multipart/form-data" class="row">
             <div class="form-group col-md-12">
               <label for="name">账号</label>
               <div class="form-controls">
-                <input type="text" class="form-control" name="account" id="name" onblur="checkAccount()" value="" placeholder="请输入用户名" />
+                <input type="text" class="form-control" id="name" name="account" value="" placeholder="请输入用户名" onblur="checkAccount()"/>
               </div>
             </div>
 
             <div class="form-group col-md-12">
               <label for="seo_keywords">密码</label>
-              <input type="text" class="form-control" id="password" name="password" value="" placeholder="密码" />
+              <input type="text" class="form-control" id="password" name="password" value="" placeholder="密码" onblur="checkPass()"/>
             </div>
 
-            <div class="form-group col-md-12">
-              <label for="seo_keywords">确认密码</label>
-              <input type="password" class="form-control" id="seo_keywords" name="re_password" value="" placeholder="确认密码" />
-            </div>
 
             <div class="form-group col-md-12">
               <label for="title">姓名</label>
-              <input type="text" class="form-control" id="title" name="name" value="" placeholder="姓名" />
+              <input type="text" class="form-control" id="title" name="name" value="" placeholder="姓名" onblur="checkName()"/>
             </div>
 
             <div class="form-group col-md-12">
               <label for="phone">手机</label>
-              <input class="form-control" id="phone" name="phone" value="" placeholder="手机号"></input>
+              <input class="form-control" id="phone" name="phone" value="" placeholder="手机号" onblur="checkPhone()"></input>
             </div>
             <div class="form-group col-md-12">
               <label for="email">邮箱</label>
-              <input class="form-control" id="email" name="email"  value="" placeholder="邮箱"></input>
+              <input class="form-control" id="email" name="email"  value="" placeholder="邮箱" onblur="checkEmail()"></input>
             </div>
 
             <div class="form-group col-md-12">
               <label for="status">状态</label>
               <div class="clearfix">
                 <label class="lyear-radio radio-inline radio-primary">
-                  <input type="radio" name="status" value="1" checked><span>正常</span>
+                  <input type="radio" name="status" value="1" checked onclick="getValue()"><span>正常</span>
                 </label>
                 <label class="lyear-radio radio-inline radio-primary">
-                  <input type="radio" name="status" value="2"><span>注销</span>
+                  <input type="radio" name="status" value="2" onclick="getValue()"><span>注销</span>
                 </label>
               </div>
             </div>
@@ -71,10 +67,10 @@
               <label for="sex">性别</label>
               <div class="clearfix">
                 <label class="lyear-radio radio-inline radio-primary">
-                  <input type="radio" name="sex" value="0" checked><span>女</span>
+                  <input type="radio" name="sex" value="0" checked onclick="getValue2()"><span>女</span>
                 </label>
                 <label class="lyear-radio radio-inline radio-primary">
-                  <input type="radio" name="sex" value="1" ><span>男</span>
+                  <input type="radio" name="sex" value="1" onclick="getValue2()" ><span>男</span>
                 </label>
               </div>
             </div>
@@ -106,7 +102,7 @@
 
 
             <div class="form-group col-md-12">
-              <button type="submit" class="btn btn-primary ajax-post" target-form="add-form">确 定</button>
+              <button type="button" onclick="executeAjax()" class="btn btn-primary ajax-post" target-form="add-form">确 定</button>
               <button type="button" class="btn btn-default" onclick="javascript:history.back(-1);return false;">返 回</button>
             </div>
           </form>
@@ -142,20 +138,108 @@
     document.getElementById("MyImg").setAttribute("src",src);
   }
 
+  //获取radio框选取的值
+  function getValue() {
+    var radio = document.getElementsByName("status");
+    for (var i = 0; i < radio.length ; i++) {
+      if(radio[i].checked){
+        return radio[i].value;
+      }
+    }
+  }
+
+  function getValue2() {
+    var radio = document.getElementsByName("sex");
+    for (var i = 0; i < radio.length ; i++) {
+      if(radio[i].checked){
+        return radio[i].value;
+      }
+    }
+  }
+
+  //标识
   var flag = true;
-  //验证表单-----------------------
-  function checkForm(){
-    //验证账号
+
+
+  function executeAjax() {
+
     var account = document.getElementById("name").value;
+    var password = document.getElementById("password").value;
+    var name = document.getElementById("title").value;
+    var phone = document.getElementById("phone").value;
+    var email = document.getElementById("email").value;
+    var status = getValue();
+    var sex = getValue2();
+
+    //上传头像验证
+    var myHead = document.getElementById("myHead").value;
+
+    console.log(status);
+    console.log(sex);
+
+    if(checkAccount() && checkPass()  && checkName()  && checkPhone()  &&  checkEmail &&  flag && (myHead.length>1)){
+      $.ajax({
+        url: '/testspringboot/user/addUser',
+        type: 'post',
+        async: true,
+        data: {
+          account:account,
+          password:password,
+          name:name,
+          phone:phone,
+          email:email,
+          status:status,
+          sex:sex
+        },
+        dataType: 'json',
+        success: function (data) {
+          console.log(data)
+          if (data.code== 20000){
+            window.location.href="/testspringboot/toUserList";
+          }else{
+
+          }
+        },
+        error: function () {
+          console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+        }
+      })
+    } else{
+
+      if (myHead.length<1) {
+        lightyear.loading('show');
+        setTimeout(function() {
+          lightyear.loading('hide');
+          lightyear.notify('头像不能为空', 'danger', 100);
+        }, 1e3)
+      }else{
+        lightyear.loading('show');
+        setTimeout(function() {
+          lightyear.loading('hide');
+          lightyear.notify('不能提交', 'danger', 100);
+        }, 1e3)
+      }
+
+    }
+
+  }
+
+  //验证表单----------------------------------------------------------------------------------
+
+
+  //验证账号是否可用
+  function checkAccount(){
+    var account = document.getElementById("name").value;
+
     if (account=="" || account==null) {
       lightyear.loading('show');
-      // 假设ajax提交操作
       setTimeout(function() {
         lightyear.loading('hide');
         lightyear.notify('账号不能为空', 'danger', 100);
       }, 1e3)
       return false;
     }
+
     var reg=/^[\u4E00-\u9FA5A-Za-z0-9_]+$/;
     if (!reg.test(account)) {
       lightyear.loading('show');
@@ -167,15 +251,42 @@
       return false;
     }
 
-    if(!flag){
+    $.post('/testspringboot/user/checkAccount?account='+account,function (result) {
+      if (result=="账号可用"){
+        lightyear.loading('show');
+        setTimeout(function() {
+          lightyear.loading('hide');
+          lightyear.notify('账号可用', 'success', 100);
+        }, 1e3)
+        flag = true;
+      }else {
+        lightyear.loading('show');
+        setTimeout(function() {
+          lightyear.loading('hide');
+          lightyear.notify('账号已注册!', 'danger', 100);
+        }, 1e3)
+        flag = false;
+      }
+    });
+    return true;
+  }
+  
+  function checkPass() {
+    //验证密码----------------------
+    var password = document.getElementById("password").value;
+    if (password=="" || password==null) {
       lightyear.loading('show');
       // 假设ajax提交操作
       setTimeout(function() {
         lightyear.loading('hide');
-        lightyear.notify('账号已注册!', 'danger', 100);
+        lightyear.notify('密码不能为空', 'danger', 100);
       }, 1e3)
       return false;
     }
+    return true;
+  }
+
+  function checkName() {
     //验证姓名--------------------
     var title = document.getElementById("title").value;
     if (title=="" || title==null) {
@@ -197,38 +308,10 @@
       }, 1e3)
       return false;
     }
-    //验证密码----------------------
-    var password = document.getElementById("password").value;
-    if (password=="" || password==null) {
-      lightyear.loading('show');
-      // 假设ajax提交操作
-      setTimeout(function() {
-        lightyear.loading('hide');
-        lightyear.notify('密码不能为空', 'danger', 100);
-      }, 1e3)
-      return false;
-    }
-    //验证确认密码----------------------
-    var seo_keywords = document.getElementById("seo_keywords").value;
-    if (seo_keywords=="" || seo_keywords==null) {
-      lightyear.loading('show');
-      // 假设ajax提交操作
-      setTimeout(function() {
-        lightyear.loading('hide');
-        lightyear.notify('确认密码不能为空', 'danger', 100);
-      }, 1e3)
-      return false;
-    }
-    //验证密码和确认密码不一致----------------------
-    if (password!=seo_keywords) {
-      lightyear.loading('show');
-      // 假设ajax提交操作
-      setTimeout(function() {
-        lightyear.loading('hide');
-        lightyear.notify('密码和确认密码不一致', 'danger', 100);
-      }, 1e3)
-      return false;
-    }
+    return true;
+  }
+
+  function checkPhone() {
     //验证手机号码不一致----------------------
     var phone = document.getElementById("phone").value;
     if (phone=="" || phone==null) {
@@ -251,6 +334,10 @@
       }, 1e3)
       return false;
     }
+    return true;
+  }
+
+  function checkEmail() {
     //验证邮箱不一致----------------------
     var email = document.getElementById("email").value;
     if (email=="" || email==null) {
@@ -273,46 +360,10 @@
       }, 1e3)
       return false;
     }
-
-    //上传头像验证
-    var myHead = document.getElementById("myHead").value;
-    if (myHead.length<1) {
-      lightyear.loading('show');
-      // 假设ajax提交操作
-      setTimeout(function() {
-        lightyear.loading('hide');
-        lightyear.notify('头像不能为空', 'danger', 100);
-      }, 1e3)
-      return false;
-    }
-
     return true;
   }
 
-
-  //验证账号是否可用
-  function checkAccount(){
-    var account = document.getElementById("name").value;
-    $.post('/admin/checkAccount?account='+account,function (result) {
-      if (result=="账号可用"){
-        lightyear.loading('show');
-        // 假设ajax提交操作
-        setTimeout(function() {
-          lightyear.loading('hide');
-          lightyear.notify('账号可用', 'success', 100);
-        }, 1e3)
-        flag = true;
-      }else {
-        lightyear.loading('show');
-        // 假设ajax提交操作
-        setTimeout(function() {
-          lightyear.loading('hide');
-          lightyear.notify('账号已注册!', 'danger', 100);
-        }, 1e3)
-        flag = false;
-      }
-    });
-  }
+  //验证表单----------------------------------------------------------------------------------
 
 </script>
 </body>
