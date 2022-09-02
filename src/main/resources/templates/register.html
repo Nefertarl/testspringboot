@@ -214,6 +214,7 @@
     } else{
       if(flag==false){
         error.innerHTML="账号已经注册";
+        document.getElementById("captcha").src=document.getElementById("captcha").src+'?d='+Math.random();
       }else{
         error.innerHTML="账号或密码或验证码不能为空";
       }
