@@ -95,6 +95,8 @@
             <li><span><a th:href="@{/toRoleList(pageNum=${items.nextPage},rolename=${search})}">»</a></span></li>
             <li><span><a th:href="@{/toRoleList(pageNum=${items.pages},rolename=${search})}">尾页</a></span></li>
 
+            <li><input id="in_i" type="text" style="width: 40px;"><button onclick="skips()">跳转</button></li>
+
           </ul>
 
         </div>
@@ -110,6 +112,35 @@
 <script type="text/javascript" th:src="@{/js/perfect-scrollbar.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/main.min.js}"></script>
 <script type="text/javascript">
+
+  function skips() {
+
+    var pageNum = document.getElementById("in_i").value;
+
+    if(isNaN(pageNum)){
+      pageNum = 0;
+    }
+
+    $.ajax({
+      url: '/testspringboot/role/pageList?pageNum='+pageNum,
+      type: 'get',
+      async: true,
+      data: {
+      },
+      dataType: 'json',
+      success: function (data) {
+        console.log(data)
+        if (data.code== 20000){
+          window.location.href="/testspringboot/toRoleList?pageNum="+pageNum;
+        }else{
+
+        }
+      },
+      error: function () {
+        console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+      }
+    })
+  }
 
   function executeAjax(id) {
 

@@ -4,6 +4,8 @@ package com.lanyuan.testspringboot.service;
 import com.github.pagehelper.PageInfo;
 import com.lanyuan.testspringboot.pojo.Role;
 
+import java.util.List;
+
 public interface RoleService {
 
     int addRole(Role role);
@@ -21,5 +23,14 @@ public interface RoleService {
     Role findByRolename(String rolename);
 
     int doBathDelRole(Integer[] ids);
+
+    //
+    List<Role> selectRoleAll();
+
+    int removeRelation(Integer uid);
+
+    int removeRid(Integer rid);
+
+    int addRelation(Integer uid,Integer[] rids);
 
 }

@@ -63,4 +63,28 @@ public class RoleServiceImpl implements RoleService {
         int i = roleMapper.doBathDelRole(ids);
         return i;
     }
+
+    //关系表的操作
+    @Override
+    public List<Role> selectRoleAll() {
+        return roleMapper.selectRoleAll();
+    }
+
+    @Override
+    public int removeRelation(Integer uid) {
+        return roleMapper.removeRelation(uid);
+    }
+
+    @Override
+    public int removeRid(Integer rid) {
+        return roleMapper.removeRid(rid);
+    }
+
+    @Override
+    public int addRelation(Integer uid, Integer[] rids) {
+        for (Integer r : rids){
+            roleMapper.addRelation(uid,r);
+        }
+        return 0;
+    }
 }

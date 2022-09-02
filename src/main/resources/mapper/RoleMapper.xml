@@ -53,6 +53,11 @@
           </if>
         </where>
     </select>
+    <select id="selectRoleAll" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List"></include>
+      from role
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from role
     where id = #{id,jdbcType=INTEGER}
@@ -100,4 +105,22 @@
     set rolename = #{rolename,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <!--在别的xml,针对于关系表-->
+  <delete id="removeRelation">
+    delete from relation
+    where uid = #{uid}
+  </delete>
+
+  <insert id="addRelation">
+    insert into relation values (#{uid},#{r})
+  </insert>
+
+  <delete id="removeRid">
+    delete from relation
+    where rid = #{rid}
+  </delete>
+
+
 </mapper>

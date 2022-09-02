@@ -57,7 +57,7 @@
                 <th>状态</th>
                 <th>创建时间</th>
                 <th>性别</th>
-                <th>头像</th>
+<!--                <th>头像</th>-->
                 <th>关联角色</th>
                 <th>操作</th>
               </tr>
@@ -85,10 +85,10 @@
                   <span th:if="*{sex eq '0'}">女</span>
                   <span th:if="*{sex eq '1'}">男</span>
                 </td>
-                <td>
-                  <img class="img-avatar" th:if="*{!#strings.isEmpty(headPic)}" th:src="@{'/upload/'+*{headPic}}" alt="图片丢了">
-                  <img class="img-avatar" th:if="*{#strings.isEmpty(headPic)}" th:src="@{/images/gallery/1.jpg}" alt="图片丢了">
-                </td>
+<!--                <td>-->
+<!--                  <img class="img-avatar" th:if="*{!#strings.isEmpty(headPic)}" th:src="@{'/upload/'+*{headPic}}" alt="图片丢了">-->
+<!--                  <img class="img-avatar" th:if="*{#strings.isEmpty(headPic)}" th:src="@{/images/gallery/1.jpg}" alt="图片丢了">-->
+<!--                </td>-->
                 <td>
                     <table th:object="${r}" th:each="r:*{roles}">
                       <tr>
@@ -126,6 +126,9 @@
             <li><span><a th:href="@{/toUserList(pageNum=${items.nextPage},account=${search2})}">»</a></span></li>
             <li><span><a th:href="@{/toUserList(pageNum=${items.pages},account=${search2})}">尾页</a></span></li>
 
+            <li><input id="in_i" type="text" style="width: 40px;"><button onclick="skips()">跳转</button></li>
+
+
           </ul>
 
         </div>
@@ -147,6 +150,36 @@
 <script th:src="@{/js/main.min.js}"></script>
 <link th:href="@{/css/animate.css}" rel="stylesheet">
 <script type="text/javascript">
+
+
+  function skips() {
+
+    var pageNum = document.getElementById("in_i").value;
+
+    if(isNaN(pageNum)){
+      pageNum = 0;
+    }
+
+    $.ajax({
+      url: '/testspringboot/user/pageList?pageNum='+pageNum,
+      type: 'get',
+      async: true,
+      data: {
+      },
+      dataType: 'json',
+      success: function (data) {
+        console.log(data)
+        if (data.code== 20000){
+          window.location.href="/testspringboot/toUserList?pageNum="+pageNum;
+        }else{
+
+        }
+      },
+      error: function () {
+        console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+      }
+    })
+  }
 
   function executeAjax(id) {
 

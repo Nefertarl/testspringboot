@@ -23,7 +23,7 @@
       <div class="card">
         <div class="card-body">
 
-          <form enctype="multipart/form-data" class="row">
+          <form enctype="multipart/form-data"  class="row" action="">
             <div class="form-group col-md-12">
               <label for="name">账号</label>
               <div class="form-controls">
@@ -76,28 +76,28 @@
             </div>
 
 
-            <div class="form-group col-md-12">
-              <label>头像</label>
-              <div class="form-controls">
+<!--            <div class="form-group col-md-12">-->
+<!--              <label>头像</label>-->
+<!--              <div class="form-controls">-->
 
-                <ul class="list-inline clearfix lyear-uploads-pic">
-                  <li class="col-xs-4 col-sm-3 col-md-2">
-                    <figure>
-                      <img th:src="@{/images/gallery/15.jpg}" alt="图片一" id="MyImg">
-                      <figcaption>
-                        <a class="btn btn-round btn-square btn-primary" href="#!"><i class="mdi mdi-eye"></i></a>
-                        <a class="btn btn-round btn-square btn-danger" href="#!"><i class="mdi mdi-delete"></i></a>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="col-xs-4 col-sm-3 col-md-2">
-                    <!--                    name名不能跟属性一样-->
-                    <input id="myHead" name="myHead" onchange="changeHead(this)" type="file" style="display: none"  />
-                    <a class="pic-add" onclick="ClickBtn()" id="add-pic-btn" href="#!" title="点击上传"></a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+<!--                <ul class="list-inline clearfix lyear-uploads-pic">-->
+<!--                  <li class="col-xs-4 col-sm-3 col-md-2">-->
+<!--                    <figure>-->
+<!--                      <img th:src="@{/images/gallery/15.jpg}" alt="图片一" id="MyImg">-->
+<!--                      <figcaption>-->
+<!--                        <a class="btn btn-round btn-square btn-primary" href="#!"><i class="mdi mdi-eye"></i></a>-->
+<!--                        <a class="btn btn-round btn-square btn-danger" href="#!"><i class="mdi mdi-delete"></i></a>-->
+<!--                      </figcaption>-->
+<!--                    </figure>-->
+<!--                  </li>-->
+<!--                  <li class="col-xs-4 col-sm-3 col-md-2">-->
+<!--                    &lt;!&ndash;                    name名不能跟属性一样&ndash;&gt;-->
+<!--                    <input id="headPic" name="headPic" onchange="changeHead(this)" type="file" style="display: none"  />-->
+<!--                    <a class="pic-add" onclick="ClickBtn()" id="add-pic-btn" href="#!" title="点击上传"></a>-->
+<!--                  </li>-->
+<!--                </ul>-->
+<!--              </div>-->
+<!--            </div>-->
 
 
 
@@ -128,15 +128,15 @@
 <link th:href="@{/css/animate.css}" rel="stylesheet">
 <script>
 
-  function ClickBtn() {
-    //获取文件组件对象触发单击事件
-    document.getElementById("myHead").click();
-  }
-  function changeHead(obj) {
-    var myFile = obj.files[0];
-    var src= window.URL.createObjectURL(myFile);
-    document.getElementById("MyImg").setAttribute("src",src);
-  }
+  // function ClickBtn() {
+  //   //获取文件组件对象触发单击事件
+  //   document.getElementById("headPic").click();
+  // }
+  // function changeHead(obj) {
+  //   var myFile = obj.files[0];
+  //   var src= window.URL.createObjectURL(myFile);
+  //   document.getElementById("MyImg").setAttribute("src",src);
+  // }
 
   //获取radio框选取的值
   function getValue() {
@@ -172,53 +172,56 @@
     var sex = getValue2();
 
     //上传头像验证
-    var myHead = document.getElementById("myHead").value;
+    // var headPic = document.getElementById("headPic").value;
 
-    console.log(status);
-    console.log(sex);
+    // console.log(status);
+    // console.log(sex);
+    // console.log(headPic)
 
-    if(checkAccount() && checkPass()  && checkName()  && checkPhone()  &&  checkEmail &&  flag && (myHead.length>1)){
-      $.ajax({
-        url: '/testspringboot/user/addUser',
-        type: 'post',
-        async: true,
-        data: {
-          account:account,
-          password:password,
-          name:name,
-          phone:phone,
-          email:email,
-          status:status,
-          sex:sex
-        },
-        dataType: 'json',
-        success: function (data) {
-          console.log(data)
-          if (data.code== 20000){
-            window.location.href="/testspringboot/toUserList";
-          }else{
+    // if(checkAccount() && checkPass()  && checkName()  && checkPhone()  &&  checkEmail &&  flag && (headPic.length>1)){
+      if(checkAccount() && checkPass()  && checkName()  && checkPhone()  &&  checkEmail &&  flag ){
+        $.ajax({
+          url: '/testspringboot/user/addUser',
+          type: 'post',
+          async: true,
+          data: {
+            account:account,
+            password:password,
+            name:name,
+            phone:phone,
+            email:email,
+            status:status,
+            sex:sex
+            // headPic:headPic
+          },
+          dataType: 'json',
+          success: function (data) {
+            console.log(data)
+            if (data.code== 20000){
+              window.location.href="/testspringboot/toUserList";
+            }else{
 
+            }
+          },
+          error: function () {
+            console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
           }
-        },
-        error: function () {
-          console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
-        }
-      })
-    } else{
+        })
+      } else{
 
-      if (myHead.length<1) {
-        lightyear.loading('show');
-        setTimeout(function() {
-          lightyear.loading('hide');
-          lightyear.notify('头像不能为空', 'danger', 100);
-        }, 1e3)
-      }else{
-        lightyear.loading('show');
-        setTimeout(function() {
-          lightyear.loading('hide');
-          lightyear.notify('不能提交', 'danger', 100);
-        }, 1e3)
-      }
+        // if (headPic.length<1) {
+        //   lightyear.loading('show');
+        //   setTimeout(function() {
+        //     lightyear.loading('hide');
+        //     lightyear.notify('头像不能为空', 'danger', 100);
+        //   }, 1e3)
+        // }else{
+          lightyear.loading('show');
+          setTimeout(function() {
+            lightyear.loading('hide');
+            lightyear.notify('不能提交', 'danger', 100);
+          }, 1e3)
+        // }
 
     }
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -49,7 +50,9 @@ public class JspController {
     }
 
     @RequestMapping("/toUserEdit")
-    public String toUserEdit(){
+    public String toUserEdit(Integer id,Map map){
+        User user = userService.getById(id);
+        map.put("u",user);
         return "/admin/edit";
     }
 
@@ -64,8 +67,12 @@ public class JspController {
     }
 
     @RequestMapping("/toUserResources")
-    public String toUserResources(){
-        return "/admin/resources";
+    public String toUserResources(Integer id,Map map){
+        User user = userService.getById(id);
+        List<Role> rt = roleService.selectRoleAll();
+        map.put("u",user);
+        map.put("rs",rt);
+        return "/admin/resources2";
     }
 
     @RequestMapping("/toRoleAdd")

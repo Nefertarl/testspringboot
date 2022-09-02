@@ -8,11 +8,11 @@
   <meta name="keywords" content="LightYear,光年,后台模板,后台管理系统,光年HTML模板">
   <meta name="description" content="LightYear是一个基于Bootstrap v3.3.7的后台管理系统的HTML模板。">
   <meta name="author" content="yinqi">
-  <link href="../css/bootstrap.min.css" rel="stylesheet">
-  <link href="../css/materialdesignicons.min.css" rel="stylesheet">
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/materialdesignicons.min.css}" rel="stylesheet">
   <!--标签插件-->
-  <link rel="stylesheet" href="../js/jquery-tags-input/jquery.tagsinput.min.css">
-  <link href="../css/style.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/js/jquery-tags-input/jquery.tagsinput.min.css}">
+  <link th:href="@{/css/style.min.css}" rel="stylesheet">
 </head>
 
 <body>
@@ -23,50 +23,43 @@
       <div class="card">
         <div class="card-body">
 
-          <form action="${base}/admin/doUpdateAdmin" id="myForm" onsubmit="return checkForm()" method="post" enctype="multipart/form-data" class="row">
-            <input type="hidden" name="id" value="${a.id}">
+          <form enctype="multipart/form-data"  class="row" action="">
+            <input type="hidden" id="id" name="id" th:value="${u.id}">
             <div class="form-group col-md-12">
               <label for="name">账号</label>
               <div class="form-controls">
-                <input type="text" class="form-control" name="account" id="name" onblur="checkAccount()" value="${a.account}" placeholder="请输入用户名" />
+                <input type="text" class="form-control" id="name" name="account" th:value="${u.account}" placeholder="请输入用户名" onblur="checkAccount()"/>
               </div>
             </div>
 
             <div class="form-group col-md-12">
               <label for="seo_keywords">密码</label>
-              <input type="text" class="form-control" id="password" name="password" value="${a.password}" placeholder="密码" />
+              <input type="text" class="form-control" id="password" name="password" th:value="${u.password}" placeholder="密码" onblur="checkPass()"/>
             </div>
 
-            <div class="form-group col-md-12">
-              <label for="seo_keywords">确认密码</label>
-              <input type="password" class="form-control" id="seo_keywords" name="re_password" value="${a.password}" placeholder="确认密码" />
-            </div>
 
             <div class="form-group col-md-12">
               <label for="title">姓名</label>
-              <input type="text" class="form-control" id="title" name="name" value="${a.name}" placeholder="姓名" />
+              <input type="text" class="form-control" id="title" name="name" th:value="${u.name}" placeholder="姓名" onblur="checkName()"/>
             </div>
 
             <div class="form-group col-md-12">
               <label for="phone">手机</label>
-              <input class="form-control" id="phone" name="phone" value="${a.phone}" placeholder="手机号"></input>
+              <input class="form-control" id="phone" name="phone" th:value="${u.phone}" placeholder="手机号" onblur="checkPhone()"></input>
             </div>
             <div class="form-group col-md-12">
               <label for="email">邮箱</label>
-              <input class="form-control" id="email" name="email"  value="${a.email}" placeholder="邮箱"></input>
+              <input class="form-control" id="email" name="email"  th:value="${u.email}" placeholder="邮箱" onblur="checkEmail()"></input>
             </div>
 
             <div class="form-group col-md-12">
               <label for="status">状态</label>
               <div class="clearfix">
                 <label class="lyear-radio radio-inline radio-primary">
-                  <input type="radio" name="status" value="0" <c:if test="${a.status eq 0}">checked</c:if> ><span>未验证</span>
+                  <input type="radio" name="status" value="1"  th:checked="${u.status eq '1'}" onclick="getValue()"><span>正常</span>
                 </label>
                 <label class="lyear-radio radio-inline radio-primary">
-                  <input type="radio" name="status" value="1" <c:if test="${a.status eq 1}">checked</c:if> ><span>正常</span>
-                </label>
-                <label class="lyear-radio radio-inline radio-primary">
-                  <input type="radio" name="status" value="2" <c:if test="${a.status eq 2}">checked</c:if> ><span>注销</span>
+                  <input type="radio" name="status" value="2"  th:checked="${u.status eq '2'}" onclick="getValue()"><span>注销</span>
                 </label>
               </div>
             </div>
@@ -75,42 +68,42 @@
               <label for="sex">性别</label>
               <div class="clearfix">
                 <label class="lyear-radio radio-inline radio-primary">
-                  <input type="radio" name="sex" value="0" <c:if test="${a.sex eq 0}">checked</c:if> ><span>女</span>
+                  <input type="radio" name="sex" value="0" th:checked="${u.sex eq '0'}"   onclick="getValue2()"><span>女</span>
                 </label>
                 <label class="lyear-radio radio-inline radio-primary">
-                  <input type="radio" name="sex" value="1" <c:if test="${a.sex eq 1}">checked</c:if> ><span>男</span>
+                  <input type="radio" name="sex" value="1" th:checked="${u.sex eq '1'}" onclick="getValue2()" ><span>男</span>
                 </label>
               </div>
             </div>
 
 
+            <!--            <div class="form-group col-md-12">-->
+            <!--              <label>头像</label>-->
+            <!--              <div class="form-controls">-->
+
+            <!--                <ul class="list-inline clearfix lyear-uploads-pic">-->
+            <!--                  <li class="col-xs-4 col-sm-3 col-md-2">-->
+            <!--                    <figure>-->
+            <!--                      <img th:src="@{/images/gallery/15.jpg}" alt="图片一" id="MyImg">-->
+            <!--                      <figcaption>-->
+            <!--                        <a class="btn btn-round btn-square btn-primary" href="#!"><i class="mdi mdi-eye"></i></a>-->
+            <!--                        <a class="btn btn-round btn-square btn-danger" href="#!"><i class="mdi mdi-delete"></i></a>-->
+            <!--                      </figcaption>-->
+            <!--                    </figure>-->
+            <!--                  </li>-->
+            <!--                  <li class="col-xs-4 col-sm-3 col-md-2">-->
+            <!--                    &lt;!&ndash;                    name名不能跟属性一样&ndash;&gt;-->
+            <!--                    <input id="headPic" name="headPic" onchange="changeHead(this)" type="file" style="display: none"  />-->
+            <!--                    <a class="pic-add" onclick="ClickBtn()" id="add-pic-btn" href="#!" title="点击上传"></a>-->
+            <!--                  </li>-->
+            <!--                </ul>-->
+            <!--              </div>-->
+            <!--            </div>-->
+
+
+
             <div class="form-group col-md-12">
-              <label>头像</label>
-              <div class="form-controls">
-
-                <ul class="list-inline clearfix lyear-uploads-pic">
-                  <li class="col-xs-4 col-sm-3 col-md-2">
-                    <figure>
-                      <img src="${base}/upload/${a.headPic}" alt="图片一" id="MyImg">
-                      <figcaption>
-                        <a class="btn btn-round btn-square btn-primary" href="#!"><i class="mdi mdi-eye"></i></a>
-                        <a class="btn btn-round btn-square btn-danger" href="#!"><i class="mdi mdi-delete"></i></a>
-                      </figcaption>
-                    </figure>
-                  </li>
-                  <li class="col-xs-4 col-sm-3 col-md-2">
-                    <%--name名不能跟属性一样--%>
-                    <input id="myHead" name="myHead" onchange="changeHead(this)" type="file" style="display: none"  value="${a.headPic}"/>
-                    <a class="pic-add" onclick="ClickBtn()" id="add-pic-btn" href="#!" title="点击上传"></a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-
-
-            <div class="form-group col-md-12">
-              <button type="submit" class="btn btn-primary ajax-post" target-form="add-form">确 定</button>
+              <button type="button" onclick="executeAjax()" class="btn btn-primary ajax-post" target-form="add-form">确 定</button>
               <button type="button" class="btn btn-default" onclick="javascript:history.back(-1);return false;">返 回</button>
             </div>
           </form>
@@ -123,43 +116,135 @@
 
 </div>
 
-<script type="text/javascript" src="../js/jquery.min.js"></script>
-<script type="text/javascript" src="../js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../js/perfect-scrollbar.min.js"></script>
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/perfect-scrollbar.min.js}"></script>
 <!--标签插件-->
-<script src="../js/jquery-tags-input/jquery.tagsinput.min.js"></script>
-<script type="text/javascript" src="../js/main.min.js"></script>
+<script th:src="@{/js/jquery-tags-input/jquery.tagsinput.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/main.min.js}"></script>
 <!--消息提示-->
-<script src="${base}/js/bootstrap-notify.min.js"></script>
-<script src="${base}/js/lightyear.js"></script>
-<script src="${base}/js/main.min.js"></script>
-<link href="${base}/css/animate.css" rel="stylesheet">
+<script th:src="@{/js/bootstrap-notify.min.js}"></script>
+<script th:src="@{/js/lightyear.js}"></script>
+<script th:src="@{/js/main.min.js}"></script>
+<link th:href="@{/css/animate.css}" rel="stylesheet">
 <script>
 
-  function ClickBtn() {
-    //获取文件组件对象触发单击事件
-    document.getElementById("myHead").click();
-  }
-  function changeHead(obj) {
-    var myFile = obj.files[0];
-    var src= window.URL.createObjectURL(myFile);
-    document.getElementById("MyImg").setAttribute("src",src);
+  // function ClickBtn() {
+  //   //获取文件组件对象触发单击事件
+  //   document.getElementById("headPic").click();
+  // }
+  // function changeHead(obj) {
+  //   var myFile = obj.files[0];
+  //   var src= window.URL.createObjectURL(myFile);
+  //   document.getElementById("MyImg").setAttribute("src",src);
+  // }
+
+  //获取radio框选取的值
+  function getValue() {
+    var radio = document.getElementsByName("status");
+    for (var i = 0; i < radio.length ; i++) {
+      if(radio[i].checked){
+        return radio[i].value;
+      }
+    }
   }
 
-  var flag = true;
-  //验证表单-----------------------
-  function checkForm(){
-    //验证账号
+  function getValue2() {
+    var radio = document.getElementsByName("sex");
+    for (var i = 0; i < radio.length ; i++) {
+      if(radio[i].checked){
+        return radio[i].value;
+      }
+    }
+  }
+
+  //标识
+  // var flag = true;
+
+
+  function executeAjax() {
+    var id = document.getElementById("id").value;
     var account = document.getElementById("name").value;
+    var password = document.getElementById("password").value;
+    var name = document.getElementById("title").value;
+    var phone = document.getElementById("phone").value;
+    var email = document.getElementById("email").value;
+    var status = getValue();
+    var sex = getValue2();
+
+    //上传头像验证
+    // var headPic = document.getElementById("headPic").value;
+
+    console.log(status);
+    console.log(sex);
+    // console.log(headPic)
+
+    // if(checkAccount() && checkPass()  && checkName()  && checkPhone()  &&  checkEmail &&  flag && (headPic.length>1)){
+    if(checkAccount() && checkPass()  && checkName()  && checkPhone()  &&  checkEmail ){
+      $.ajax({
+        url: '/testspringboot/user/updateUser',
+        type: 'put',
+        async: true,
+        data: {
+          id:id,
+          account:account,
+          password:password,
+          name:name,
+          phone:phone,
+          email:email,
+          status:status,
+          sex:sex
+          // headPic:headPic
+        },
+        dataType: 'json',
+        success: function (data) {
+          console.log(data)
+          if (data.code== 20000){
+            window.location.href="/testspringboot/toUserList";
+          }else{
+
+          }
+        },
+        error: function () {
+          console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+        }
+      })
+    } else{
+
+      // if (headPic.length<1) {
+      //   lightyear.loading('show');
+      //   setTimeout(function() {
+      //     lightyear.loading('hide');
+      //     lightyear.notify('头像不能为空', 'danger', 100);
+      //   }, 1e3)
+      // }else{
+      lightyear.loading('show');
+      setTimeout(function() {
+        lightyear.loading('hide');
+        lightyear.notify('不能提交', 'danger', 100);
+      }, 1e3)
+      // }
+
+    }
+
+  }
+
+  //验证表单----------------------------------------------------------------------------------
+
+
+  //验证账号是否可用
+  function checkAccount(){
+    var account = document.getElementById("name").value;
+
     if (account=="" || account==null) {
       lightyear.loading('show');
-      // 假设ajax提交操作
       setTimeout(function() {
         lightyear.loading('hide');
         lightyear.notify('账号不能为空', 'danger', 100);
       }, 1e3)
       return false;
     }
+
     var reg=/^[\u4E00-\u9FA5A-Za-z0-9_]+$/;
     if (!reg.test(account)) {
       lightyear.loading('show');
@@ -171,6 +256,42 @@
       return false;
     }
 
+    // $.post('/testspringboot/user/checkAccount?account='+account,function (result) {
+    //   if (result=="账号可用"){
+    //     lightyear.loading('show');
+    //     setTimeout(function() {
+    //       lightyear.loading('hide');
+    //       lightyear.notify('账号可用', 'success', 100);
+    //     }, 1e3)
+    //     flag = true;
+    //   }else {
+    //     lightyear.loading('show');
+    //     setTimeout(function() {
+    //       lightyear.loading('hide');
+    //       lightyear.notify('账号已注册!', 'danger', 100);
+    //     }, 1e3)
+    //     flag = false;
+    //   }
+    // });
+    return true;
+  }
+
+  function checkPass() {
+    //验证密码----------------------
+    var password = document.getElementById("password").value;
+    if (password=="" || password==null) {
+      lightyear.loading('show');
+      // 假设ajax提交操作
+      setTimeout(function() {
+        lightyear.loading('hide');
+        lightyear.notify('密码不能为空', 'danger', 100);
+      }, 1e3)
+      return false;
+    }
+    return true;
+  }
+
+  function checkName() {
     //验证姓名--------------------
     var title = document.getElementById("title").value;
     if (title=="" || title==null) {
@@ -192,38 +313,10 @@
       }, 1e3)
       return false;
     }
-    //验证密码----------------------
-    var password = document.getElementById("password").value;
-    if (password=="" || password==null) {
-      lightyear.loading('show');
-      // 假设ajax提交操作
-      setTimeout(function() {
-        lightyear.loading('hide');
-        lightyear.notify('密码不能为空', 'danger', 100);
-      }, 1e3)
-      return false;
-    }
-    //验证确认密码----------------------
-    var seo_keywords = document.getElementById("seo_keywords").value;
-    if (seo_keywords=="" || seo_keywords==null) {
-      lightyear.loading('show');
-      // 假设ajax提交操作
-      setTimeout(function() {
-        lightyear.loading('hide');
-        lightyear.notify('确认密码不能为空', 'danger', 100);
-      }, 1e3)
-      return false;
-    }
-    //验证密码和确认密码不一致----------------------
-    if (password!=seo_keywords) {
-      lightyear.loading('show');
-      // 假设ajax提交操作
-      setTimeout(function() {
-        lightyear.loading('hide');
-        lightyear.notify('密码和确认密码不一致', 'danger', 100);
-      }, 1e3)
-      return false;
-    }
+    return true;
+  }
+
+  function checkPhone() {
     //验证手机号码不一致----------------------
     var phone = document.getElementById("phone").value;
     if (phone=="" || phone==null) {
@@ -246,6 +339,10 @@
       }, 1e3)
       return false;
     }
+    return true;
+  }
+
+  function checkEmail() {
     //验证邮箱不一致----------------------
     var email = document.getElementById("email").value;
     if (email=="" || email==null) {
@@ -268,22 +365,10 @@
       }, 1e3)
       return false;
     }
-
-    //上传头像验证
-    var myHead = document.getElementById("myHead").value;
-    if (myHead.length<1) {
-      lightyear.loading('show');
-      // 假设ajax提交操作
-      setTimeout(function() {
-        lightyear.loading('hide');
-        lightyear.notify('头像不能为空', 'danger', 100);
-      }, 1e3)
-      return false;
-    }
-
     return true;
   }
 
+  //验证表单----------------------------------------------------------------------------------
 
 </script>
 </body>

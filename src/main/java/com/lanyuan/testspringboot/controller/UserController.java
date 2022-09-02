@@ -3,6 +3,7 @@ package com.lanyuan.testspringboot.controller;
 import com.github.pagehelper.PageInfo;
 import com.lanyuan.testspringboot.interfaces.R;
 import com.lanyuan.testspringboot.pojo.User;
+import com.lanyuan.testspringboot.service.RoleService;
 import com.lanyuan.testspringboot.service.UserService;
 import com.lanyuan.testspringboot.util.CodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,51 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    RoleService roleService;
+
+
     @PostMapping("/addUser")
     public R addUser(User user){
+
+        /*System.out.println("前端传过来的是啥:"+user.getHeadPic());
+
+        int n = user.getHeadPic().lastIndexOf("\\");
+        String substring = user.getHeadPic().substring(n+1);
+
+        System.out.println("相当于[MultipartFile myHead][myHead.getOriginalFilename()]:"+substring);
+
+        String path = null;
+
+        try {
+            //springboot使用的是内置tomcat,地址都是虚拟的
+            //需要手动获取项目根目录
+            path = ResourceUtils.getURL("classpath:").getPath();
+            path=path+"static/upload";
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("上传的地址:"+path);
+
+        File f = new File(path);
+        if(!f.exists()) f.mkdirs();
+        String oldName = substring;
+        String suffix = oldName.substring(oldName.lastIndexOf("."));
+        String newName = UUID.randomUUID().toString()+suffix;
+
+        path = path + File.separator + newName;
+
+        *//*try {
+            //实现上传  参数是一个文件对象
+            my.transferTo(new File(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*//*
+
+        System.out.println("返回值是:"+newName);
+
+        user.setHeadPic(newName);*/
+
         user.setCreatetime(new Date());
         int i = userService.addUser(user);
         if(i>0){
@@ -36,11 +80,16 @@ public class UserController {
         }
     }
 
-    @PostMapping("/updateUser")
+    @PutMapping("/updateUser")
     public R updateUser( User user){
-        int i = userService.updateById(user);
-        if(i>0){
-            return R.ok();
+
+        if((user.getSex().equals("0") || user.getSex().equals("1")) && (user.getStatus().equals("1") || user.getStatus().equals("2"))){
+            int i = userService.updateById(user);
+            if(i>0){
+                return R.ok();
+            }else{
+                return R.error();
+            }
         }else{
             return R.error();
         }
@@ -53,6 +102,10 @@ public class UserController {
       User user = new User();
       user.setId(id);
       user.setDel("1");
+
+        //先删除原来的关系表
+        roleService.removeRelation(id);
+
       int i = userService.removeById(user);
         if(i>0){
             return R.ok();
@@ -77,6 +130,12 @@ public class UserController {
         }
 
         if(i>0){
+
+            for(Integer id : ids){
+                //先删除原来的关系表
+                roleService.removeRelation(id);
+            }
+
             userService.doBathDelUser(ids);
             return R.ok();
         }else{
@@ -170,5 +229,7 @@ public class UserController {
             return R.error().data("error","验证码输入错误");
         }
     }
+
+
 
 }
