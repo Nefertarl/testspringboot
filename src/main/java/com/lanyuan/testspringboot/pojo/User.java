@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+
 public class User implements Serializable {
     private Integer id;
 
@@ -135,25 +136,22 @@ public class User implements Serializable {
         this.del = del == null ? null : del.trim();
     }
 
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", account=").append(account);
-        sb.append(", password=").append(password);
-        sb.append(", name=").append(name);
-        sb.append(", phone=").append(phone);
-        sb.append(", email=").append(email);
-        sb.append(", status=").append(status);
-        sb.append(", createtime=").append(createtime);
-        sb.append(", sex=").append(sex);
-        sb.append(", headPic=").append(headPic);
-        sb.append(", del=").append(del);
-        sb.append(", roles=").append(roles);
-        sb.append("]");
-        return sb.toString();
+        return "User{" +
+                "id=" + id +
+                ", account='" + account + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", status='" + status + '\'' +
+                ", createtime=" + createtime +
+                ", sex='" + sex + '\'' +
+                ", headPic='" + headPic + '\'' +
+                ", del='" + del + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 }

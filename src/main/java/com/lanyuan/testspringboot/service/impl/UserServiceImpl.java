@@ -85,4 +85,9 @@ public class UserServiceImpl implements UserService {
         return userMapper.findByAcunt(account);
     }
 
+    @Override
+    public User findByAccunt2(String account) {
+        return userMapper.findByAccunt2(account);
+    }
+
 }

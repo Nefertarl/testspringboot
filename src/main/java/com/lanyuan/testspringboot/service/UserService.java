@@ -27,4 +27,6 @@ public interface UserService {
 
     User findByAcunt(String account);
 
+    User findByAccunt2(String account);
+
 }

@@ -30,12 +30,17 @@ public class RoleController {
 
     @PostMapping("/doAdd")
     public R doAdd( Role u){
-        int i = roleService.addRole(u);
-        if(i>0){
-            return R.ok();
+        if(u.getRolename()==null||u.getRolename()==""){
+            return R.error().data("mess","你对象的参数为空");
         }else{
-            return R.error();
+            int i = roleService.addRole(u);
+            if(i>0){
+                return R.ok();
+            }else{
+                return R.error();
+            }
         }
+
     }
 
     //验证角色名称是否可用
