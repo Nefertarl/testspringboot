@@ -27,6 +27,8 @@ public interface UserMapper {
 
     User findByAcunt(String account);
 
+    User findByAccunt2(String account);
+
     List<User> selectUserByRid(Integer rid);
 
     int doBathDelUser(Integer[] ids);

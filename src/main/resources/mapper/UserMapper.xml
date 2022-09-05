@@ -79,6 +79,12 @@
       </if>
     </where>
   </select>
+  <select id="findByAccunt2" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from user
+    where account = #{account}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user
     where id = #{id,jdbcType=INTEGER}

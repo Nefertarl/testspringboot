@@ -32,51 +32,24 @@ public class UserController {
 
     @PostMapping("/addUser")
     public R addUser(User user){
-
-        /*System.out.println("前端传过来的是啥:"+user.getHeadPic());
-
-        int n = user.getHeadPic().lastIndexOf("\\");
-        String substring = user.getHeadPic().substring(n+1);
-
-        System.out.println("相当于[MultipartFile myHead][myHead.getOriginalFilename()]:"+substring);
-
-        String path = null;
-
-        try {
-            //springboot使用的是内置tomcat,地址都是虚拟的
-            //需要手动获取项目根目录
-            path = ResourceUtils.getURL("classpath:").getPath();
-            path=path+"static/upload";
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        System.out.println("上传的地址:"+path);
-
-        File f = new File(path);
-        if(!f.exists()) f.mkdirs();
-        String oldName = substring;
-        String suffix = oldName.substring(oldName.lastIndexOf("."));
-        String newName = UUID.randomUUID().toString()+suffix;
-
-        path = path + File.separator + newName;
-
-        *//*try {
-            //实现上传  参数是一个文件对象
-            my.transferTo(new File(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*//*
-
-        System.out.println("返回值是:"+newName);
-
-        user.setHeadPic(newName);*/
-
-        user.setCreatetime(new Date());
-        int i = userService.addUser(user);
-        if(i>0){
-            return R.ok();
+        if(user.getAccount()==null||user.getAccount().equals("")){
+            return R.error().data("mess","你对象的参数为空");
         }else{
-            return R.error();
+            User byAcunt = userService.findByAccunt2(user.getAccount());
+            System.out.println(byAcunt);
+            if(byAcunt==null){
+                user.setCreatetime(new Date());
+                int i = userService.addUser(user);
+                if(i>0){
+                    return R.ok();
+                }else{
+                    return R.error();
+                }
+            }else{
+                return R.error().data("mess","对象已存在");
+            }
+
+
         }
     }
 
@@ -190,13 +163,18 @@ public class UserController {
         ServletContext application = session.getServletContext();
         String ran2 =(String) application.getAttribute("randomCode2");
         User user = new User(account,password);
-        if(ran2.equalsIgnoreCase(code)){
-            User u = userService.login(user);
-            if(u!=null){
-                return R.ok().data("user",u);
-            }else return R.error().data("error","账号密码输入错误");
-        }else {
-            return R.error().data("error","验证码输入错误");
+
+        if(user.getAccount()==null||user.getAccount().equals("") || user.getPassword().equals("") || code.equals("")){
+            return R.error().data("mess","你对象的参数为空");
+        }else{
+            if(ran2.equalsIgnoreCase(code)){
+                User u = userService.login(user);
+                if(u!=null){
+                    return R.ok().data("user",u);
+                }else return R.error().data("error","账号密码输入错误");
+            }else {
+                return R.error().data("error","验证码输入错误");
+            }
         }
 
     }
@@ -218,16 +196,21 @@ public class UserController {
         user.setCreatetime(new Date());
         ServletContext application = session.getServletContext();
         String ran2 =(String) application.getAttribute("randomCode2");
-        if(ran2.equalsIgnoreCase(code)){
-            int i = userService.addUser(user);
-            if(i>0){
-                return R.ok();
-            }else{
-                return R.error();
-            }
+        if(user.getAccount()==null||user.getAccount().equals("") || user.getPassword().equals("") || code.equals("")){
+            return R.error().data("mess","你对象的参数为空");
         }else{
-            return R.error().data("error","验证码输入错误");
+            if(ran2.equalsIgnoreCase(code)){
+                int i = userService.addUser(user);
+                if(i>0){
+                    return R.ok();
+                }else{
+                    return R.error();
+                }
+            }else{
+                return R.error().data("error","验证码错误");
+            }
         }
+
     }
 
 
