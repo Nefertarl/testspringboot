@@ -45,6 +45,14 @@ public class UserController {
             System.out.println(byAcunt);
             if(byAcunt==null){
                 user.setCreatetime(new Date());
+                System.out.println("新增的时候: "+user.getAccount());
+                SimpleHash md5 = new SimpleHash(
+                        "md5",
+                        user.getPassword(),
+                        user.getAccount()+"",
+                        1024
+                );
+                user.setPassword(String.valueOf(md5));
                 int i = userService.addUser(user);
                 if(i>0){
                     return R.ok();
