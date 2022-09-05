@@ -146,13 +146,13 @@
           if(flagA &&  flagP && flagC){
               //    data中传递json对象
               $.ajax({
-                  url: '/testspringboot/user/login',
+                  url: '/testspringboot/user/loginShiro',
                   type: 'get',
                   async: true,
                   data: {
-                      account,
-                      password,
-                      code
+                      account:account,
+                      password:password,
+                      code:code
                   },
                   dataType: 'json',
                   success: function (data) {

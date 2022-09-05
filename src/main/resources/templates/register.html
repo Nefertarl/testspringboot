@@ -103,123 +103,123 @@
 
 <script type="text/javascript">
 
-  var error = document.getElementById("error");
+    var error = document.getElementById("error");
 
-  var flag = true;
+    var flag = true;
 
-  function checkAcc() {
-    var account = document.getElementById("account").value;
-    if (account==null||account==""){
-      error.innerHTML="账号不可以为空";
-      return false;
-    }
-    error.innerHTML="";
-    //验证账号是否可用
-    $.post('/testspringboot/user/checkAccount?account='+account,function (result) {
-      if (result=="账号可用"){
-        lightyear.loading('show');
-        setTimeout(function() {
-          lightyear.loading('hide');
-          lightyear.notify('账号可用', 'success', 100);
-        }, 1e3)
-        flag = true;
-      }else {
-        // lightyear.loading('show');
-        // setTimeout(function() {
-        //   lightyear.loading('hide');
-        //   lightyear.notify('账号已注册!', 'danger', 100);
-        // }, 1e3)
-        flag = false;
-      }
-    });
-    return true;
-  }
-
-  function checkPw() {
-    var password = document.getElementById("password").value;
-    var passwords = document.getElementById("passwords").value;
-    if (password==null||password==""){
-      error.innerHTML="密码不可以为空";
-      return false;
-    }
-    if((password != passwords) && (passwords!="")){
-      error.innerHTML="两次密码不一致";
-      return false
-    }
-    error.innerHTML="";
-    return true;
-  }
-
-  function checkPws() {
-    var passwords = document.getElementById("passwords").value;
-    var password = document.getElementById("password").value;
-    if (passwords==null||passwords==""){
-      error.innerHTML="确认密码不可以为空";
-      return false;
-    }
-    if((password != passwords) && (password !="")){
-      error.innerHTML="两次密码不一致";
-      return false
-    }
-    error.innerHTML="";
-    return true;
-  }
-
-  function checkCode() {
-    var code = document.getElementById("code").value;
-    if (code==null||code==""){
-      error.innerHTML="验证码不可以为空";
-      return false;
-    }
-    error.innerHTML="";
-    return true;
-  }
-
-  function executeAjax() {
-    var account = document.getElementById("account").value;
-    var password = document.getElementById("password").value;
-    var code = document.getElementById("code").value;
-
-    if(checkAcc() &&  checkPw() && checkPws()  && checkCode() && flag){
-      //    data中传递json对象
-      $.ajax({
-        url: '/testspringboot/user/RegisterUser',
-        type: 'post',
-        async: true,
-        data: {
-          account,
-          password,
-          code
-        },
-        dataType: 'json',
-        success: function (data) {
-          console.log(data)
-          if (data.code== 20000){
-            window.location.href="/testspringboot/toLogin";
-          }else{
-            if(data.data.error){
-              lightyear.loading('show');
-              setTimeout(function() {
-                lightyear.loading('hide');
-                lightyear.notify(data.data.error, 'danger', 100);
-              }, 0)
-            }
-            document.getElementById("captcha").src=document.getElementById("captcha").src+'?d='+Math.random();
-          }
-        },
-        error: function () {
-          console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+    function checkAcc() {
+        var account = document.getElementById("account").value;
+        if (account==null||account==""){
+            error.innerHTML="账号不可以为空";
+            return false;
         }
-      })
-    } else{
-      if(flag==false){
-        error.innerHTML="账号已经注册";
-        document.getElementById("captcha").src=document.getElementById("captcha").src+'?d='+Math.random();
-      }else{
-        error.innerHTML="账号或密码或验证码不能为空";
-      }
+        error.innerHTML="";
+        //验证账号是否可用
+        $.post('/testspringboot/user/checkAccount?account='+account,function (result) {
+            if (result=="账号可用"){
+                lightyear.loading('show');
+                setTimeout(function() {
+                    lightyear.loading('hide');
+                    lightyear.notify('账号可用', 'success', 100);
+                }, 1e3)
+                flag = true;
+            }else {
+                // lightyear.loading('show');
+                // setTimeout(function() {
+                //   lightyear.loading('hide');
+                //   lightyear.notify('账号已注册!', 'danger', 100);
+                // }, 1e3)
+                flag = false;
+            }
+        });
+        return true;
     }
-  }
+
+    function checkPw() {
+        var password = document.getElementById("password").value;
+        var passwords = document.getElementById("passwords").value;
+        if (password==null||password==""){
+            error.innerHTML="密码不可以为空";
+            return false;
+        }
+        if((password != passwords) && (passwords!="")){
+            error.innerHTML="两次密码不一致";
+            return false
+        }
+        error.innerHTML="";
+        return true;
+    }
+
+    function checkPws() {
+        var passwords = document.getElementById("passwords").value;
+        var password = document.getElementById("password").value;
+        if (passwords==null||passwords==""){
+            error.innerHTML="确认密码不可以为空";
+            return false;
+        }
+        if((password != passwords) && (password !="")){
+            error.innerHTML="两次密码不一致";
+            return false
+        }
+        error.innerHTML="";
+        return true;
+    }
+
+    function checkCode() {
+        var code = document.getElementById("code").value;
+        if (code==null||code==""){
+            error.innerHTML="验证码不可以为空";
+            return false;
+        }
+        error.innerHTML="";
+        return true;
+    }
+
+    function executeAjax() {
+        var account = document.getElementById("account").value;
+        var password = document.getElementById("password").value;
+        var code = document.getElementById("code").value;
+
+        if(checkAcc() &&  checkPw() && checkPws()  && checkCode() && flag){
+            //    data中传递json对象
+            $.ajax({
+                url: '/testspringboot/user/RegisterUserShiro',
+                type: 'post',
+                async: true,
+                data: {
+                    account:account,
+                    password:password,
+                    code:code
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                    if (data.code== 20000){
+                        window.location.href="/testspringboot/toLogin";
+                    }else{
+                        if(data.data.error){
+                            lightyear.loading('show');
+                            setTimeout(function() {
+                                lightyear.loading('hide');
+                                lightyear.notify(data.data.error, 'danger', 100);
+                            }, 0)
+                        }
+                        document.getElementById("captcha").src=document.getElementById("captcha").src+'?d='+Math.random();
+                    }
+                },
+                error: function () {
+                    console.log('因为网络的一些原因,给你造成不便,敬请谅解.......')
+                }
+            })
+        } else{
+            if(flag==false){
+                error.innerHTML="账号已经注册";
+                document.getElementById("captcha").src=document.getElementById("captcha").src+'?d='+Math.random();
+            }else{
+                error.innerHTML="账号或密码或验证码不能为空";
+            }
+        }
+    }
 </script>
 </body>
 </html>
