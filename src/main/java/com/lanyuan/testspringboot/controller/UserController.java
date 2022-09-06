@@ -236,25 +236,49 @@ public class UserController {
         User user = new User(account,password);
         //当前时间,作为注册时间
         user.setCreatetime(new Date());
-//        System.out.println("注册的时候: "+user.getCreatetime().getTime());
-        System.out.println("注册的时候: "+user.getAccount());
-        SimpleHash md5 = new SimpleHash(
-                "md5",
-                user.getPassword(),
-                user.getAccount()+"",
-                1024
-        );
-        user.setPassword(String.valueOf(md5));
 
-        if(ran2.equalsIgnoreCase(code)){
-            int i = userService.addUser(user);
-            if(i>0){
-                return R.ok();
-            }else{
-                return R.error();
-            }
+
+        if(user.getAccount()==null|| "".equals(user.getAccount())){
+            return R.error().data("mess","账号不可为空");
         }else{
-            return R.error().data("error","验证码输入错误");
+            if("".equals(user.getPassword()) || user.getPassword() == null ){
+                return R.error().data("mess","密码不可为空");
+            }else{
+                if( "".equals(code) || code == null){
+                    return R.error().data("mess","验证码不可为空");
+                }else{
+                    User byAcunt = userService.findByAccunt2(user.getAccount());
+                    System.out.println(byAcunt);
+                    if(byAcunt==null){
+
+                        //        System.out.println("注册的时候: "+user.getCreatetime().getTime());
+                        System.out.println("注册的时候: "+user.getAccount());
+                        SimpleHash md5 = new SimpleHash(
+                                "md5",
+                                user.getPassword(),
+                                user.getAccount()+"",
+                                1024
+                        );
+                        user.setPassword(String.valueOf(md5));
+
+                        if(ran2.equalsIgnoreCase(code)){
+                            int i = userService.addUser(user);
+                            if(i>0){
+                                return R.ok();
+                            }else{
+                                return R.error();
+                            }
+                        }else{
+                            return R.error().data("error","验证码输入错误");
+                        }
+
+
+
+                    }else{
+                        return R.error().data("mess","账号已注册");
+                    }
+                }
+            }
         }
     }
 
@@ -268,20 +292,34 @@ public class UserController {
         Subject sub = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(user.getAccount(),user.getPassword());
 
-        if(ran2.equalsIgnoreCase(code)){
+        if(user.getAccount()==null|| "".equals(user.getAccount())){
+            return R.error().data("mess","账号不可为空");
+        }else{
+            if("".equals(user.getPassword()) || user.getPassword() == null ){
+                return R.error().data("mess","密码不可为空");
+            }else{
+                if( "".equals(code) || code == null){
+                    return R.error().data("mess","验证码不可为空");
+                }else{
 
-            try {
-                sub.login(token);
-                User admin =(User) sub.getPrincipal();
-                session.setAttribute("admin",admin);
-                return R.ok().data("admin",admin);
-            } catch (AuthenticationException e) {
-                return R.error().data("error","账号密码输入错误");
+                    if(ran2.equalsIgnoreCase(code)){
+
+                        try {
+                            sub.login(token);
+                            User admin =(User) sub.getPrincipal();
+                            session.setAttribute("admin",admin);
+                            return R.ok().data("admin",admin);
+                        } catch (AuthenticationException e) {
+                            return R.error().data("error","登录失败");
+                        }
+                    }else {
+                        return R.error().data("error","验证码输入错误");
+                    }
+
+
+                }
             }
-        }else {
-            return R.error().data("error","验证码输入错误");
         }
-
     }
 
 }
