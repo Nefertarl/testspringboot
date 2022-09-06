@@ -96,4 +96,9 @@ public class JspController {
         return "/role/list";
     }
 
+    @RequestMapping("/logout")
+    public String logout(){
+        return "/login";
+    }
+
 }
